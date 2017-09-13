@@ -109,7 +109,7 @@ mnu_bar.add_cascade(label= "Settings", menu = set_mnu);
 #Packing menubar on root..
 root.config(menu = mnu_bar);
 
-'''_________________________________________________Widgets_used..._________________'''
+'''_________________________________________________Other_Widgets_used..._________________'''
 #Universal Label...
 uni_lbl = ttk.Label(root, text = "iDetector", background = bgcolor, font = 'Lucinda').place(x = x_cor + 300, y = y_cor);
 uni_lbl = ttk.Label(root, text = "Detect Information from Images and Videos", background = bgcolor, font = 'Lucinda').place(x = x_cor + 180, y = y_cor + 25);
