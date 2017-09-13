@@ -1,5 +1,5 @@
 from tkinter import Tk, Text, ttk, filedialog, messagebox, Menu
-from clarifai.rest import ClarifaiApp, Image as ClImage, Video as vid
+from clarifai.rest import ClarifaiApp, Image as ClImage, Video as ClVid
 from timeit import default_timer
 
 #common settings...
@@ -8,15 +8,23 @@ dir_init = "/home";
 bgcolor = "blue";
 x_cor = 10;
 y_cor = 5;
-
+model = ' ';
 
 '''__________________________________________All_Functions_______________________________________...'''
 
 #Settings Menu function....
-def settings():
+def stg():
     print("In Settings Menu...");
 
+#Help Function menu..
+def hlp():
+    print("In help Menu..");
+
+def abt():
+    print("In About menu");
+
 def mak_con():
+    global model; 
     #creating instance of ClarifaiApp() here because it is taking time to load thereby making the GUI to load very late..
     srt_tim = default_timer();
     try:
@@ -29,11 +37,33 @@ def mak_con():
     
 
 def vid_anl():
-    pass;
+    try:
+        global file_name;
+        global model;
+        vid_fil = ClVid(file_obj=open(file_name, 'rb'))
+
+        #clarifai returns dictionary by default....
+        pre = model.predict([vid_fil]);
+        print(pre);
+        #inserting data into the textbox...
+        pre_vid_inf.config(state = 'normal');
+        pre_vid_inf.delete("1.0", "end-1c");
+
+        for i in range(len(pre['outputs'][0]['data']['concepts'])):
+            text = "{}: Name: {} \n   Value: {} \n".format(i+1, pre['outputs'][0]['data']['concepts'][i]['name'],\
+                                                         pre['outputs'][0]['data']['concepts'][i]['value']);
+            pre_vid_inf.insert("insert", text);
+        pre_vid_inf.config(state = 'disabled');
+
+    except Exception as e:
+        print(str(e));
+        #tkinter.messagebox.ERROR();
+        messagebox.showerror('I/O Error', str(e));
 
 def img_anl():
     try:
         global file_name;
+        global model;
         img_fil = ClImage(file_obj=open(file_name, 'rb'))
 
         #clarifai returns dictionary by default....
@@ -100,11 +130,16 @@ mnu_bar = Menu(root);
 
 #Settings_Menu:
 set_mnu = Menu(mnu_bar, tearoff = 1);
-set_mnu.add_command(label = "Command 1", command = settings);
-mnu_bar.add_cascade(label= "Settings", menu = set_mnu);
+set_mnu.add_command(label = "Command_1.1", command = stg);
+mnu_bar.add_cascade(label = "Settings", menu = set_mnu);
+
 #Help_Menu:
+hlp_mnu = Menu(mnu_bar, tearoff = 1);
+hlp_mnu.add_command(label = 'command_2.1', command = hlp);
+mnu_bar.add_cascade(label = 'Help', menu = hlp_mnu);
 
 #About_Menu:
+
 
 #Packing menubar on root..
 root.config(menu = mnu_bar);
@@ -141,7 +176,7 @@ pre_vid_inf.config(state = 'disabled');
 pre_vid_inf.place(x = x_cor + 390, y = y_cor + 85);
 
 #Button for send request and analyze an image...
-alz_vid_btn = ttk.Button(root, text = 'Ananlyze').place(x = x_cor + 480, y = y_cor + 445);
+alz_vid_btn = ttk.Button(root, text = 'Ananlyze', command = vid_anl).place(x = x_cor + 480, y = y_cor + 445);
 
 ##print(root.children);
 ##print(root._windowingsystem);
