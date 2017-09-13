@@ -1,22 +1,25 @@
 from tkinter import Tk, Text, ttk, filedialog, messagebox
 from clarifai.rest import ClarifaiApp, Image as ClImage, Video as vid
+from timeit import default_timer
 
 #common settings...
 file_name = " ";
 dir_init = "/home";
-bgcolor = "blue"
+bgcolor = "blue";
 x_cor = 10;
 y_cor = 5;
 
 def mak_con():
     #creating instance of ClarifaiApp() here because it is taking time to load thereby making the GUI to load very late..
+    srt_tim = default_timer();
     try:
         app = ClarifaiApp()
         model = app.models.get('general-v1.3');
-        messagebox.showinfo('Connection Status', 'Connection Established');
+        messagebox.showinfo('Connection Status', 'Connection Established.\nTime Taken : %2f sec.'%(default_timer() - srt_tim));
 
     except Exception as e:
-        messgaebox.showerror('Connection Status', str(e));
+        messagebox.showerror('Connection Status', str(e));
+    
 
 def vid_anl():
     pass;
