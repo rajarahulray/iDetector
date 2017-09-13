@@ -1,4 +1,4 @@
-from tkinter import Tk, Text, ttk, filedialog, messagebox
+from tkinter import Tk, Text, ttk, filedialog, messagebox, Menu
 from clarifai.rest import ClarifaiApp, Image as ClImage, Video as vid
 from timeit import default_timer
 
@@ -8,6 +8,13 @@ dir_init = "/home";
 bgcolor = "blue";
 x_cor = 10;
 y_cor = 5;
+
+
+#All_Functions...
+
+#Settings Menu function....
+def settings():
+    print("In Settings Menu...");
 
 def mak_con():
     #creating instance of ClarifaiApp() here because it is taking time to load thereby making the GUI to load very late..
@@ -79,6 +86,7 @@ def img_bwr(file_type):
                 break;
         
 '''__________________________Root_window...________________________________________'''    
+
 #root..and its initial settings....
 root = Tk();
 root.title('iDetector');
@@ -86,6 +94,22 @@ root.config(background = bgcolor);
 root.geometry("697x550");
 root.resizable(0,0);
 
+'''_________________________________________________MenuBar_______________________'''
+#Menubar instance...
+mnu_bar = Menu(root);
+
+#Settings_Menu:
+set_mnu = Menu(mnu_bar, tearoff = 1);
+set_mnu.add_command(label = "Command 1", command = settings);
+mnu_bar.add_cascade(label= "Settings", menu = set_mnu);
+#Help_Menu:
+
+#About_Menu:
+
+#Packing menubar on root..
+root.config(menu = mnu_bar);
+
+'''_________________________________________________Widgets_used..._________________'''
 #Universal Label...
 uni_lbl = ttk.Label(root, text = "iDetector", background = bgcolor, font = 'Lucinda').place(x = x_cor + 300, y = y_cor);
 uni_lbl = ttk.Label(root, text = "Detect Information from Images and Videos", background = bgcolor, font = 'Lucinda').place(x = x_cor + 180, y = y_cor + 25);
@@ -126,4 +150,3 @@ alz_vid_btn = ttk.Button(root, text = 'Ananlyze').place(x = x_cor + 480, y = y_c
 clf_con_btn = ttk.Button(root, text = 'Connect to Clarifai', command = mak_con).place(x = x_cor + 280, y = y_cor + 485);
 
 root.mainloop();
-
