@@ -78,10 +78,7 @@ def img_bwr(file_type):
                 dir_init = file_name[:i];
                 break;
         
-    
-    
-
-
+'''__________________________Root_window...________________________________________'''    
 #root..and its initial settings....
 root = Tk();
 root.title('iDetector');
