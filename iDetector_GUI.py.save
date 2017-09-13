@@ -1,0 +1,25 @@
+
+from tkinter import Tk, Button, Text, Label, ttk, filedialog
+
+#function to open an image through file_dialog Box..
+def img_bwr():
+    file = filedialog.askopenfile();
+    print("File Opened is : {}".format(file));
+
+#root..
+root = Tk();
+root.config(background = 'white');
+
+#Universal Label...
+uni_lbl = ttk.Label(root, text = 'Upload Image', background = 'white').place(x = 10, y = 20);
+
+#Button to fetch image....
+img_btn = ttk.Button(root, text = "Browse", command = img_bwr).place(x = 100, y = 10);
+
+#Text box to show image prediction info..
+pre_inf = Text(root)
+pre_inf.config(state = 'disabled');
+pre_inf.place(x = 10, y = 40);
+print(root.children);
+print(root._windowingsystem);
+root.mainloop();
