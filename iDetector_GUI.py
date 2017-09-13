@@ -10,7 +10,7 @@ x_cor = 10;
 y_cor = 5;
 
 
-#All_Functions...
+'''__________________________________________All_Functions_______________________________________...'''
 
 #Settings Menu function....
 def settings():
