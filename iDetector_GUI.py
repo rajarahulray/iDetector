@@ -46,21 +46,21 @@ def vid_anl():
 
         #clarifai returns dictionary by default....
         pre = model.predict([vid_fil]);
-        print(pre);
-        #inserting data into the textbox...
+
+        #inserting data into the textbox from dictionary returned from clarifai...
         pre_vid_inf.config(state = 'normal');
         pre_vid_inf.delete("1.0", "end-1c");
-##
-##        for i in range(len(pre['outputs'][0]['data']['concepts'])):
-##            text = "{}: Name: {} \n   Value: {} \n".format(i+1, pre['outputs'][0]['data']['concepts'][i]['name'],\
-##                                                         pre['outputs'][0]['data']['concepts'][i]['value']);
-##            pre_vid_inf.insert("insert", text);
-        pre_vid_inf.insert('insert', pre['outputs'][0]['data']['frames'][0]['data']['concepts'][0]);
+
+        for i in range(len(pre['outputs'][0]['data']['frames'])):
+            for j in range(len(pre['outputs'][0]['data']['frames'][i]['data']['concepts'])):
+                text = "{}: Name: {} \n   Value: {} \n".format(j+1, pre['outputs'][0]['data']['frames'][i]['data']['concepts'][j]['name'],\
+                                                             pre['outputs'][0]['data']['frames'][i]['data']['concepts'][j]['value']);
+                pre_vid_inf.insert("insert", text);
+        ##pre_vid_inf.insert('insert', pre['outputs'][0]['data']['frames'][0]['data']['concepts'][0]);
         pre_vid_inf.config(state = 'disabled');
 
     except Exception as e:
         print(str(e));
-        print(file_vid_name);
         messagebox.showerror('I/O Error', str(e));
 
 def img_anl():
@@ -83,7 +83,6 @@ def img_anl():
 
     except Exception as e:
         print(str(e));
-        #tkinter.messagebox.ERROR();
         messagebox.showerror('I/O Error', str(e));
         
     
