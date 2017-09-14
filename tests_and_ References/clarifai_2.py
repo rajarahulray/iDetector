@@ -18,7 +18,7 @@ pre = model.predict([image]);
 
 print(pre);
 
-#Video siize should notexceed 10 MB...for morw than 10 MB just slice videos in patrs of 10 MB each.... 
+#Video siize should notexceed 10 MB...for more than 10 MB just slice videos in patrs of 10 MB each.... 
 
 ##video = vid(filename = "/home/raja/Videos/Jerry's_face_expression_chat_no.4_Screencast 2017-08-13 23:41:11.mp4");
 ##pre_vid = model.predict([video]);

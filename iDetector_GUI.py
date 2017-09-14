@@ -1,9 +1,10 @@
-from tkinter import Tk, Text, ttk, filedialog, messagebox, Menu
+from tkinter import Tk, Text, ttk, filedialog, messagebox, Menu, StringVar
 from clarifai.rest import ClarifaiApp, Image as ClImage, Video as ClVid
 from timeit import default_timer
 
 #common settings...
-file_name = " ";
+file_img_name = " ";
+file_vid_name = " ";
 dir_init = "/home";
 bgcolor = "blue";
 x_cor = 10;
@@ -24,12 +25,13 @@ def abt():
     print("In About menu");
 
 def mak_con():
-    global model; 
+    global model;
     #creating instance of ClarifaiApp() here because it is taking time to load thereby making the GUI to load very late..
     srt_tim = default_timer();
     try:
         app = ClarifaiApp()
         model = app.models.get('general-v1.3');
+        lbl_txt.set('   Connected');
         messagebox.showinfo('Connection Status', 'Connection Established.\nTime Taken : %2f sec.'%(default_timer() - srt_tim));
 
     except Exception as e:
@@ -37,10 +39,10 @@ def mak_con():
     
 
 def vid_anl():
+    global file_vid_name;
     try:
-        global file_name;
         global model;
-        vid_fil = ClVid(file_obj=open(file_name, 'rb'))
+        vid_fil = ClVid(file_obj=open(file_vid_name, 'rb'))
 
         #clarifai returns dictionary by default....
         pre = model.predict([vid_fil]);
@@ -48,23 +50,24 @@ def vid_anl():
         #inserting data into the textbox...
         pre_vid_inf.config(state = 'normal');
         pre_vid_inf.delete("1.0", "end-1c");
-
-        for i in range(len(pre['outputs'][0]['data']['concepts'])):
-            text = "{}: Name: {} \n   Value: {} \n".format(i+1, pre['outputs'][0]['data']['concepts'][i]['name'],\
-                                                         pre['outputs'][0]['data']['concepts'][i]['value']);
-            pre_vid_inf.insert("insert", text);
+##
+##        for i in range(len(pre['outputs'][0]['data']['concepts'])):
+##            text = "{}: Name: {} \n   Value: {} \n".format(i+1, pre['outputs'][0]['data']['concepts'][i]['name'],\
+##                                                         pre['outputs'][0]['data']['concepts'][i]['value']);
+##            pre_vid_inf.insert("insert", text);
+        pre_vid_inf.insert('insert', pre['outputs'][0]['data']['frames'][0]['data']['concepts'][0]);
         pre_vid_inf.config(state = 'disabled');
 
     except Exception as e:
         print(str(e));
-        #tkinter.messagebox.ERROR();
+        print(file_vid_name);
         messagebox.showerror('I/O Error', str(e));
 
 def img_anl():
+    global file_img_name;
     try:
-        global file_name;
         global model;
-        img_fil = ClImage(file_obj=open(file_name, 'rb'))
+        img_fil = ClImage(file_obj=open(file_img_name, 'rb'))
 
         #clarifai returns dictionary by default....
         pre = model.predict([img_fil]);
@@ -86,33 +89,36 @@ def img_anl():
     
 #function to open an image through file_dialog Box..
 def img_bwr(file_type):
-    global file_name;
+    global file_img_name;
+    global file_vid_name;
     global dir_init;
 
     #Distinguishing FileDailog for image and Videofiles...
     if file_type is 'img':
         file = filedialog.askopenfile(initialdir = dir_init, title = 'Select Files...',filetypes = (("jpeg files","*.jpg"), ("all files","*.*")));
         print("File Opened is : {}".format(file));
-        file_name = str(file);
+        file_img_name = str(file);
         
         #extracting filename from askopenfile object...
-        file_name = file_name[file_name.find('name') + 6 : file_name.find('mode') - 2];
-
+        file_img_name = file_img_name[file_img_name.find('name') + 6 : file_img_name.find('mode') - 2];
+        print('File_img_name = ',file_img_name);
         #preserving browsed directory...
-        for i in range(len(file_name)-1, 0, -1):
-            if file_name[i] == '/':
+        for i in range(len(file_img_name)-1, 0, -1):
+            if file_img_name[i] == '/':
                 print(i);
-                dir_init = file_name[:i];
+                dir_init = file_img_name[:i];
                 break;
         
     else:
         file = filedialog.askopenfile(initialdir = dir_init, title = 'Select Files...',filetypes = (("Mp4 files","*.mp4"), ("all files","*.*")));
         print("File Opened is : {}".format(file));
-        file_name = str(file);
-        file_name = file_name[file_name.find('name') + 6 : file_name.find('mode') - 2];
-        for i in range(len(file_name)-1, 0, -1):
-            if file_name[i] == '/':
-                dir_init = file_name[:i];
+        file_vid_name = str(file);
+        file_vid_name = file_vid_name[file_vid_name.find('name') + 6 : file_vid_name.find('mode') - 2];
+
+        print('File_vid_name = ',file_vid_name);
+        for i in range(len(file_vid_name)-1, 0, -1):
+            if file_vid_name[i] == '/':
+                dir_init = file_vid_name[:i];
                 break;
         
 '''__________________________Root_window...________________________________________'''    
@@ -139,7 +145,9 @@ hlp_mnu.add_command(label = 'command_2.1', command = hlp);
 mnu_bar.add_cascade(label = 'Help', menu = hlp_mnu);
 
 #About_Menu:
-
+abt_mnu = Menu(mnu_bar, tearoff = 1);
+abt_mnu.add_command(label = 'command_3.1', command = abt);
+mnu_bar.add_cascade(label = 'About', menu = abt_mnu);
 
 #Packing menubar on root..
 root.config(menu = mnu_bar);
@@ -183,5 +191,10 @@ alz_vid_btn = ttk.Button(root, text = 'Ananlyze', command = vid_anl).place(x = x
 
 #Button to make connection through Clarifai API client....
 clf_con_btn = ttk.Button(root, text = 'Connect to Clarifai', command = mak_con).place(x = x_cor + 280, y = y_cor + 485);
+
+#Label to notify the connection status at startup using StringVar..(not possible otherwise..)....
+lbl_txt = StringVar();
+lbl_txt.set(' Not Connected');
+uni_lbl = ttk.Label(root, textvariable = lbl_txt , background = bgcolor).place(x = x_cor + 290, y = y_cor + 520);
 
 root.mainloop();
