@@ -48,14 +48,15 @@ def vid_anl():
         #inserting data into the textbox from dictionary returned from clarifai...
         pre_vid_inf.config(state = 'normal');
         pre_vid_inf.delete("1.0", "end-1c");
-
+        tab = [['Frame_no.','Sr.No.', 'Category', 'Prediction Value']];
         for i in range(len(pre['outputs'][0]['data']['frames'])):
+            tab.append([i + 1]);
             for j in range(len(pre['outputs'][0]['data']['frames'][i]['data']['concepts'])):
-                text = "{}: Name: {} \n   Value: {} \n".format(j+1, pre['outputs'][0]['data']['frames'][i]['data']['concepts'][j]['name'],\
-                                                             pre['outputs'][0]['data']['frames'][i]['data']['concepts'][j]['value']);
-                pre_vid_inf.insert("insert", text);
-        print(i, j);
-        ##pre_vid_inf.insert('insert', pre['outputs'][0]['data']['frames'][0]['data']['concepts'][0]);
+                tab.append([' ', j+1, pre['outputs'][0]['data']['frames'][i]['data']['concepts'][j]['name'], pre['outputs'][0]['data']['frames'][i]['data']['concepts'][j]['value']]);
+
+        pre_vid_inf.insert("insert", DoubleTable(tab).table);
+        print(DoubleTable(tab).table);
+        
         pre_vid_inf.config(state = 'disabled');
         print("Video Analysis Complete");
 
@@ -83,15 +84,16 @@ def img_anl():
         tbl = DoubleTable(tab);
         print(tbl.table);
         
-
         pre_img_inf.insert("insert", tbl.table);
         pre_img_inf.config(state = 'disabled');
 
-            
         print("Image Analysis Complete");
     except Exception as e:
         print(str(e));
-        messagebox.showerror('I/O Error', str(e));
+        if str(e) == "'str' object has no attribute 'predict'":
+            messagebox.showerror('I/O Error', 'Please Connect to Clarifai');
+        else:
+            messagebox.showerror('I/O Error', str(e));
         
     
 #function to open an image through file_dialog Box..

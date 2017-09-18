@@ -113,3 +113,5 @@ Werkzeug==0.12.2
 wkhtmltopdf==0.2
 wrapt==1.10.11
 zope.interface==4.4.2
+
+Note: Most of the libraries are for testing...
