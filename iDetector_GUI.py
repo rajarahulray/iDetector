@@ -71,6 +71,7 @@ def img_anl():
 
         #clarifai returns dictionary by default....
         pre = model.predict([img_fil]);
+        
         #inserting data into the textbox...
         pre_img_inf.config(state = 'normal');
         pre_img_inf.delete("1.0", "end-1c");
@@ -108,6 +109,7 @@ def img_bwr(file_type):
         #extracting filename from askopenfile object...
         file_img_name = file_img_name[file_img_name.find('name') + 6 : file_img_name.find('mode') - 2];
         print('File_img_name = ',file_img_name);
+        
         #preserving browsed directory...
         for i in range(len(file_img_name)-1, 0, -1):
             if file_img_name[i] == '/':
@@ -133,9 +135,6 @@ def img_bwr(file_type):
 root = Tk();
 root.title('iDetector');
 root.config(background = bgcolor);
-#root.geometry("897x650");
-##root.resizable(0,0);
-
 
 #search about frames.........
 frm_int = Frame(root, background = bgcolor);
@@ -185,7 +184,6 @@ frm_int.grid_columnconfigure(0, weight = 1);
 frm_int.grid_rowconfigure(4, weight = 2);
 frm_int.grid_columnconfigure(4, weight = 1);
 
-#uni_lbl = ttk.Label(root, text = 'Upload Image', background = bgcolor).place(x = x_cor + 50, y = y_cor + 65);
 uni_lbl = ttk.Label(frm_int, background = bgcolor, font = 'Lucinda').grid(row = 3, column = 3, sticky = 'ew');
 
 #Button to fetch image....
@@ -208,12 +206,10 @@ pre_img_inf.config(state = 'disabled');
 #Empty Lable to seprate two Text boxes..
 uni_lbl = ttk.Label(frm_img_txt_box, width = 10, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 3, sticky = 'ns');
 
-
-#Text box to show image prediction info..
+#Text box to show video prediction info..
 pre_vid_inf = Text(frm_vid_txt_box,)
 pre_vid_inf.config(state = 'disabled');
 pre_vid_inf.grid(row = 1, column = 0, sticky = 'ew');
-
 
 #Scrollbar for video details text box....
 vid_srl_bar = Scrollbar(frm_vid_txt_box, command = pre_vid_inf.yview);
@@ -224,19 +220,13 @@ pre_vid_inf.config(state = 'disabled');
 #Button for send request and analyze an image...
 alz_img_btn = ttk.Button(frm_img_txt_box, text = 'Ananlyze', command = img_anl).grid(row = 2, column = 0, sticky = 'ew');
 
-
-'''___________________Same_but_different_things_for_Video_Analysis..._______________________________________'''
-
-
 #Button for send request and analyze an image...
 alz_vid_btn = ttk.Button(frm_vid_txt_box, text = 'Ananlyze', command = vid_anl).grid(row = 2, sticky = 'ew');
 
-##print(root.children);
-##print(root._windowingsystem);
-
-#Button to make connection through Clarifai API client....;
+#Empty Lable to seprate rows..
 uni_lbl = ttk.Label(frm_con, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 0, sticky = 'ew');
 
+#Button to make connection through Clarifai API client....;
 clf_con_txt = StringVar()
 clf_con_txt.set('Connect To Clarifai');
 clf_con_btn = ttk.Button(frm_con, textvariable = clf_con_txt, command = mak_con).grid(row = 1, column = 1, sticky = 'nsew');
