@@ -1,14 +1,16 @@
 from tkinter import Tk, Text, ttk, filedialog, messagebox, Menu, StringVar, Scrollbar, LEFT, RIGHT, Frame
 from clarifai.rest import ClarifaiApp, Image as ClImage, Video as ClVid
 from timeit import default_timer
-from terminaltables import DoubleTable
 
 #common settings...
 file_img_name = " ";
 file_vid_name = " ";
 dir_init = "/home";
 bgcolor = "blue";
+x_cor = 10;
+y_cor = 5;
 model = ' ';
+
 '''__________________________________________All_Functions_______________________________________...'''
 
 #Settings Menu function....
@@ -29,7 +31,7 @@ def mak_con():
     try:
         app = ClarifaiApp()
         model = app.models.get('general-v1.3');
-        clf_con_txt.set('Connected');
+        lbl_txt.set('   Connected');
         messagebox.showinfo('Connection Status', 'Connection Established.\nTime Taken : %2f sec.'%(default_timer() - srt_tim));
 
     except Exception as e:
@@ -74,19 +76,12 @@ def img_anl():
         #inserting data into the textbox...
         pre_img_inf.config(state = 'normal');
         pre_img_inf.delete("1.0", "end-1c");
-        tab = [['Sr.No.', 'Category', 'Prediction Value']];
 
         for i in range(len(pre['outputs'][0]['data']['concepts'])):
-            tab.append([i+1, pre['outputs'][0]['data']['concepts'][i]['name'] ,pre['outputs'][0]['data']['concepts'][i]['value']]);
-        
-        tbl = DoubleTable(tab);
-        print(tbl.table);
-        
-
-        pre_img_inf.insert("insert", tbl.table);
+            text = "{}: Name: {} \n   Value: {} \n".format(i+1, pre['outputs'][0]['data']['concepts'][i]['name'],\
+                                                         pre['outputs'][0]['data']['concepts'][i]['value']);
+            pre_img_inf.insert("insert", text);
         pre_img_inf.config(state = 'disabled');
-
-            
         print("Image Analysis Complete");
     except Exception as e:
         print(str(e));
@@ -133,22 +128,24 @@ def img_bwr(file_type):
 root = Tk();
 root.title('iDetector');
 root.config(background = bgcolor);
-#root.geometry("897x650");
-##root.resizable(0,0);
+root.geometry("697x550");
+root.resizable(0,0);
 
 
 #search about frames.........
-frm_int = Frame(root, background = bgcolor);
-frm_int.grid(row = 0, columnspan = 6, sticky = 'ew');
+'''frm_int = Frame(root);
+frm_int.pack();
+frm_fil_upl = Frame(root);
+frm_fil_upl.pack();
 
-frm_img_txt_box = Frame(root, background = bgcolor);
-frm_img_txt_box.grid(row = 2, column = 0, sticky = 'nsew');
+frm_txt_box = Frame(root);
+frm_txt_box.pack();
 
-frm_vid_txt_box = Frame(root, background = bgcolor);
-frm_vid_txt_box.grid(row = 2, column = 1, sticky = 'nsew');
+frm_anl = Frame(root);
+frm_anl.pack();
 
-frm_con = Frame(root, background = bgcolor);
-frm_con.grid(row = 4, columnspan = 4, sticky = 'ew');
+frm_con = Frame(root);
+frm_con.pack();'''
 
 
 '''_________________________________________________MenuBar_______________________'''
@@ -177,72 +174,53 @@ root.config(menu = mnu_bar);
 
 '''______________________________for_image_analysis______________'''
 #Universal Label...
-uni_lbl = ttk.Label(frm_int, text = "                       iDetector", background = bgcolor, font = 'Lucinda').grid(row = 1, column = 2, sticky = 'ew');
-uni_lbl = ttk.Label(frm_int, text = "Detect Information from Images and Videos", background = bgcolor, font = 'Lucinda').grid(row = 2, column = 2, sticky = 'ew');
+uni_lbl = ttk.Label(root, text = "iDetector", background = bgcolor, font = 'Lucinda').place(x = x_cor + 300, y = y_cor);
+uni_lbl = ttk.Label(root, text = "Detect Information from Images and Videos", background = bgcolor, font = 'Lucinda').place(x = x_cor + 180, y = y_cor + 25);
 
-frm_int.grid_rowconfigure(0, weight = 1);
-frm_int.grid_columnconfigure(0, weight = 1);
-frm_int.grid_rowconfigure(4, weight = 2);
-frm_int.grid_columnconfigure(4, weight = 1);
-
-#uni_lbl = ttk.Label(root, text = 'Upload Image', background = bgcolor).place(x = x_cor + 50, y = y_cor + 65);
-uni_lbl = ttk.Label(frm_int, background = bgcolor, font = 'Lucinda').grid(row = 3, column = 3, sticky = 'ew');
+uni_lbl = ttk.Label(root, text = 'Upload Image', background = bgcolor).place(x = x_cor + 50, y = y_cor + 65);
 
 #Button to fetch image....
-img_btn = ttk.Button(frm_img_txt_box, text = "Browse", command = lambda: img_bwr('img')).grid(row = 0, column = 0, sticky = 'ew');
-
-#Button to fetch video....
-vid_btn = ttk.Button(frm_vid_txt_box, text = "Browse", command = lambda: img_bwr('vid')).grid(row = 0, column = 0, sticky = 'ew');
+img_btn = ttk.Button(root, text = "Browse", command = lambda: img_bwr('img')).place(x = x_cor + 140, y = y_cor + 55);
 
 #Text box to show image prediction info..
-pre_img_inf = Text(frm_img_txt_box,)
-pre_img_inf.grid(row = 1, column = 0, sticky = 'nsew');
-
+pre_img_inf = Text(root,width = 40,)
+pre_img_inf.place(x = x_cor, y = y_cor + 85);
 
 #Scrollbar for image details text box....
-img_srl_bar = Scrollbar(frm_img_txt_box, command = pre_img_inf.yview);
-img_srl_bar.grid(row = 1, column = 2, sticky = 'nsew');
+img_srl_bar = Scrollbar(root, command = pre_img_inf.yview);
+img_srl_bar.pack(side = RIGHT, fill = 'y');
 pre_img_inf.config(yscrollcommand = img_srl_bar.set);
 pre_img_inf.config(state = 'disabled');
 
-#Empty Lable to seprate two Text boxes..
-uni_lbl = ttk.Label(frm_img_txt_box, width = 10, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 3, sticky = 'ns');
-
-
-#Text box to show image prediction info..
-pre_vid_inf = Text(frm_vid_txt_box,)
-pre_vid_inf.config(state = 'disabled');
-pre_vid_inf.grid(row = 1, column = 0, sticky = 'ew');
-
-
-#Scrollbar for video details text box....
-vid_srl_bar = Scrollbar(frm_vid_txt_box, command = pre_vid_inf.yview);
-vid_srl_bar.grid(row = 1, column = 2, sticky = 'nsew');
-pre_vid_inf.config(yscrollcommand = vid_srl_bar.set);
-pre_vid_inf.config(state = 'disabled');
-
 #Button for send request and analyze an image...
-alz_img_btn = ttk.Button(frm_img_txt_box, text = 'Ananlyze', command = img_anl).grid(row = 2, column = 0, sticky = 'ew');
+alz_img_btn = ttk.Button(root, text = 'Ananlyze', command = img_anl).place(x = x_cor + 90, y = y_cor + 445);
 
 
 '''___________________Same_but_different_things_for_Video_Analysis..._______________________________________'''
 
+#Universal Label...
+uni_lbl = ttk.Label(root, text = 'Upload Video', background = bgcolor).place(x = x_cor + 440, y = y_cor + 65);
+
+#Button to fetch image....
+vid_btn = ttk.Button(root, text = "Browse", command = lambda: img_bwr('vid')).place(x = x_cor + 530, y = y_cor + 55);
+
+#Text box to show image prediction info..
+pre_vid_inf = Text(root,width = 40,)
+pre_vid_inf.config(state = 'disabled');
+pre_vid_inf.place(x = x_cor + 390, y = y_cor + 85);
 
 #Button for send request and analyze an image...
-alz_vid_btn = ttk.Button(frm_vid_txt_box, text = 'Ananlyze', command = vid_anl).grid(row = 2, sticky = 'ew');
+alz_vid_btn = ttk.Button(root, text = 'Ananlyze', command = vid_anl).place(x = x_cor + 480, y = y_cor + 445);
 
 ##print(root.children);
 ##print(root._windowingsystem);
 
-#Button to make connection through Clarifai API client....;
-uni_lbl = ttk.Label(frm_con, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 0, sticky = 'ew');
+#Button to make connection through Clarifai API client....
+clf_con_btn = ttk.Button(root, text = 'Connect to Clarifai', command = mak_con).place(x = x_cor + 280, y = y_cor + 485);
 
-clf_con_txt = StringVar()
-clf_con_txt.set('Connect To Clarifai');
-clf_con_btn = ttk.Button(frm_con, textvariable = clf_con_txt, command = mak_con).grid(row = 1, column = 1, sticky = 'nsew');
-frm_con.grid_rowconfigure(0, weight = 1);
-frm_con.grid_columnconfigure(0, weight = 1);
-frm_con.grid_rowconfigure(2, weight = 1);
-frm_con.grid_columnconfigure(2, weight = 1);
+#Label to notify the connection status at startup using StringVar..(not possible otherwise..)....
+lbl_txt = StringVar();
+lbl_txt.set(' Not Connected');
+uni_lbl = ttk.Label(root, textvariable = lbl_txt , background = bgcolor).place(x = x_cor + 290, y = y_cor + 520);
 
 root.mainloop();
