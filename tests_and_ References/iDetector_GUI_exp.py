@@ -189,10 +189,10 @@ frm_int.grid_columnconfigure(4, weight = 1);
 uni_lbl = ttk.Label(frm_int, background = bgcolor, font = 'Lucinda').grid(row = 3, column = 3, sticky = 'ew');
 
 #Button to fetch image....
-img_btn = ttk.Button(frm_img_txt_box, text = "Browse", command = lambda: img_bwr('img')).grid(row = 0, column = 0, sticky = 'ew');
+img_btn = ttk.Button(frm_img_txt_box, text = "Browse Image", command = lambda: img_bwr('img')).grid(row = 0, column = 0, sticky = 'ew');
 
 #Button to fetch video....
-vid_btn = ttk.Button(frm_vid_txt_box, text = "Browse", command = lambda: img_bwr('vid')).grid(row = 0, column = 0, sticky = 'ew');
+vid_btn = ttk.Button(frm_vid_txt_box, text = "Browse Video", command = lambda: img_bwr('vid')).grid(row = 0, column = 0, sticky = 'ew');
 
 #Text box to show image prediction info..
 pre_img_inf = Text(frm_img_txt_box,)
@@ -222,14 +222,14 @@ pre_vid_inf.config(yscrollcommand = vid_srl_bar.set);
 pre_vid_inf.config(state = 'disabled');
 
 #Button for send request and analyze an image...
-alz_img_btn = ttk.Button(frm_img_txt_box, text = 'Ananlyze', command = img_anl).grid(row = 2, column = 0, sticky = 'ew');
+alz_img_btn = ttk.Button(frm_img_txt_box, text = 'Ananlyze Image', command = img_anl).grid(row = 2, column = 0, sticky = 'ew');
 
 
 '''___________________Same_but_different_things_for_Video_Analysis..._______________________________________'''
 
 
 #Button for send request and analyze an image...
-alz_vid_btn = ttk.Button(frm_vid_txt_box, text = 'Ananlyze', command = vid_anl).grid(row = 2, sticky = 'ew');
+alz_vid_btn = ttk.Button(frm_vid_txt_box, text = 'Ananlyze Video', command = vid_anl).grid(row = 2, sticky = 'ew');
 
 ##print(root.children);
 ##print(root._windowingsystem);
