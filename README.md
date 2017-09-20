@@ -1,3 +1,5 @@
 # iDetector
 ## A python tkinter program to use Clarifai API to analyze images and videos... 
->>>>>>> 20c8d59ca92651e48a1aaebe494e98afbaa51b0d
+
+## Screenshot:
+![Alt text](/../iDetector/screenshots/iDetector_2017-09-19 18-13-46.png?raw=true "GUI window of iDetector.")
