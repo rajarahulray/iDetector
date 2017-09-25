@@ -1,27 +1,37 @@
-from tkinter import Tk, Text, ttk, filedialog, messagebox, Menu, StringVar, Scrollbar, LEFT, RIGHT, Frame
+from tkinter import Tk, Text, Button, Label, filedialog, messagebox, Menu, StringVar, Scrollbar, LEFT, RIGHT, Frame
 from clarifai.rest import ClarifaiApp, Image as ClImage, Video as ClVid
 from timeit import default_timer
 from terminaltables import DoubleTable
 
 #common settings...
-file_img_name = " ";
-file_vid_name = " ";
-dir_init = "/home";
+fil_img_nam = " ";
+fil_vid_nam = " ";
+dir_int = "/home";
 bgcolor = "blue";
 model = ' ';
 '''__________________________________________All_Functions_______________________________________...'''
 
+
+#Image Information Function...
+def img_inf(img):
+##    try:
+##        global fil_mg_nam
+    pass;
+
+
 #Settings Menu function....
 def stg():
     print("In Settings Menu...");
-
-#Help Function menu..
+    
+#Help Menu Function.....
 def hlp():
     print("In help Menu..");
-
+    
+#About Menu Function.....
 def abt():
     print("In About menu");
 
+#Making conection to Clarifai...
 def mak_con():
     global model;
     #creating instance of ClarifaiApp() here because it is taking time to load thereby making the GUI to load very late..
@@ -29,18 +39,21 @@ def mak_con():
     try:
         app = ClarifaiApp()
         model = app.models.get('general-v1.3');
+        clf_con_btn.config(bg = 'green');
         clf_con_txt.set('Connected');
+        
         messagebox.showinfo('Connection Status', 'Connection Established.\nTime Taken : %2f sec.'%(default_timer() - srt_tim));
 
     except Exception as e:
         messagebox.showerror('Connection Status', str(e));
     
 
+#Video Analysis.
 def vid_anl():
-    global file_vid_name;
+    global fil_vid_nam;
     try:
         global model;
-        vid_fil = ClVid(file_obj=open(file_vid_name, 'rb'))
+        vid_fil = ClVid(file_obj=open(fil_vid_nam, 'rb'))
 
         #clarifai returns dictionary by default....
         pre = model.predict([vid_fil]);
@@ -61,13 +74,18 @@ def vid_anl():
 
     except Exception as e:
         print(str(e));
-        messagebox.showerror('I/O Error', str(e));
+        if str(e) == "'str' object has no attribute 'predict'":
+            messagebox.showerror('I/O Error', 'Please Connect to Clarifai');
+        else:
+            messagebox.showerror('I/O Error', str(e));
 
+
+#Image Analysis....
 def img_anl():
-    global file_img_name;
+    global fil_img_nam;
     try:
         global model;
-        img_fil = ClImage(file_obj=open(file_img_name, 'rb'))
+        img_fil = ClImage(file_obj=open(fil_img_nam, 'rb'))
 
         #clarifai returns dictionary by default....
         pre = model.predict([img_fil]);
@@ -90,41 +108,44 @@ def img_anl():
         print("Image Analysis Complete");
     except Exception as e:
         print(str(e));
-        messagebox.showerror('I/O Error', str(e));
+        if str(e) == "'str' object has no attribute 'predict'":
+            messagebox.showerror('I/O Error', 'Please Connect to Clarifai');
+        else:
+            messagebox.showerror('I/O Error', str(e));
         
     
 #function to open an image through file_dialog Box..
 def img_bwr(file_type):
-    global file_img_name;
-    global file_vid_name;
-    global dir_init;
+    global fil_img_nam;
+    global fil_vid_nam;
+    global dir_int;
 
     #Distinguishing FileDailog for image and Videofiles...
     if file_type is 'img':
-        file = filedialog.askopenfile(initialdir = dir_init, title = 'Select Files...',filetypes = (("jpeg files","*.jpg"), ("all files","*.*")));
+        file = filedialog.askopenfile(initialdir = dir_int, title = 'Select Files...',filetypes = (("jpeg files","*.jpg"), ("all files","*.*")));
         print("File Opened is : {}".format(file));
-        file_img_name = str(file);
+        fil_img_nam = str(file);
         
         #extracting filename from askopenfile object...
-        file_img_name = file_img_name[file_img_name.find('name') + 6 : file_img_name.find('mode') - 2];
-        print('File_img_name = ',file_img_name);
+        fil_img_nam = fil_img_nam[fil_img_nam.find('name') + 6 : fil_img_nam.find('mode') - 2];
+        print('fil_img_nam = ',fil_img_nam);
         #preserving browsed directory...
-        for i in range(len(file_img_name)-1, 0, -1):
-            if file_img_name[i] == '/':
+        for i in range(len(fil_img_nam)-1, 0, -1):
+            if fil_img_nam[i] == '/':
                 print(i);
-                dir_init = file_img_name[:i];
+                dir_int = fil_img_nam[:i];
                 break;
         
     else:
-        file = filedialog.askopenfile(initialdir = dir_init, title = 'Select Files...',filetypes = (("Mp4 files","*.mp4"), ("all files","*.*")));
+        file = filedialog.askopenfile(initialdir = dir_int, title = 'Select Files...',filetypes = (("Mp4 files","*.mp4"), ("all files","*.*")));
         print("File Opened is : {}".format(file));
-        file_vid_name = str(file);
-        file_vid_name = file_vid_name[file_vid_name.find('name') + 6 : file_vid_name.find('mode') - 2];
+        fil_vid_nam = str(file);
+        fil_vid_nam = fil_vid_nam[fil_vid_nam.find('name') + 6 : fil_vid_nam.find('mode') - 2];
 
-        print('File_vid_name = ',file_vid_name);
-        for i in range(len(file_vid_name)-1, 0, -1):
-            if file_vid_name[i] == '/':
-                dir_init = file_vid_name[:i];
+        print('fil_vid_nam = ',fil_vid_nam);
+        for i in range(len(fil_vid_nam)-1, 0, -1):
+            if fil_vid_nam[i] == '/':
+                dir_int = fil_vid_nam[:i];
                 break;
         
 '''__________________________Root_window...________________________________________'''    
@@ -137,15 +158,20 @@ root.config(background = bgcolor);
 ##root.resizable(0,0);
 
 
-#search about frames.........
+
+#frames.........
 frm_int = Frame(root, background = bgcolor);
 frm_int.grid(row = 0, columnspan = 6, sticky = 'ew');
 
+
 frm_img_txt_box = Frame(root, background = bgcolor);
 frm_img_txt_box.grid(row = 2, column = 0, sticky = 'nsew');
+frm_img_txt_box.isgridded = True;
 
 frm_vid_txt_box = Frame(root, background = bgcolor);
 frm_vid_txt_box.grid(row = 2, column = 1, sticky = 'nsew');
+frm_vid_txt_box.isgridded = True;
+
 
 frm_con = Frame(root, background = bgcolor);
 frm_con.grid(row = 4, columnspan = 4, sticky = 'ew');
@@ -177,22 +203,22 @@ root.config(menu = mnu_bar);
 
 '''______________________________for_image_analysis______________'''
 #Universal Label...
-uni_lbl = ttk.Label(frm_int, text = "                       iDetector", background = bgcolor, font = 'Lucinda').grid(row = 1, column = 2, sticky = 'ew');
-uni_lbl = ttk.Label(frm_int, text = "Detect Information from Images and Videos", background = bgcolor, font = 'Lucinda').grid(row = 2, column = 2, sticky = 'ew');
+uni_lbl = Label(frm_int, text = "iDetector", background = bgcolor, font = 'Lucinda').grid(row = 1, column = 2, sticky = 'ew');
+uni_lbl = Label(frm_int, text = "Detect Information from Images and Videos", background = bgcolor, font = 'Lucinda').grid(row = 2, column = 2, sticky = 'ew');
 
 frm_int.grid_rowconfigure(0, weight = 1);
 frm_int.grid_columnconfigure(0, weight = 1);
 frm_int.grid_rowconfigure(4, weight = 2);
 frm_int.grid_columnconfigure(4, weight = 1);
 
-#uni_lbl = ttk.Label(root, text = 'Upload Image', background = bgcolor).place(x = x_cor + 50, y = y_cor + 65);
-uni_lbl = ttk.Label(frm_int, background = bgcolor, font = 'Lucinda').grid(row = 3, column = 3, sticky = 'ew');
+#uni_lbl = Label(root, text = 'Upload Image', background = bgcolor).place(x = x_cor + 50, y = y_cor + 65);
+uni_lbl = Label(frm_int, background = bgcolor, font = 'Lucinda').grid(row = 3, column = 3, sticky = 'ew');
 
 #Button to fetch image....
-img_btn = ttk.Button(frm_img_txt_box, text = "Browse Image", command = lambda: img_bwr('img')).grid(row = 0, column = 0, sticky = 'ew');
+img_btn = Button(frm_img_txt_box, text = "Browse Image",  command = lambda: img_bwr('img'), bg = 'violet', ).grid(row = 0, column = 0, sticky = 'ew');
 
 #Button to fetch video....
-vid_btn = ttk.Button(frm_vid_txt_box, text = "Browse Video", command = lambda: img_bwr('vid')).grid(row = 0, column = 0, sticky = 'ew');
+vid_btn = Button(frm_vid_txt_box, text = "Browse Video", command = lambda: img_bwr('vid'), bg = 'violet').grid(row = 0, column = 0, sticky = 'ew');
 
 #Text box to show image prediction info..
 pre_img_inf = Text(frm_img_txt_box,)
@@ -206,8 +232,7 @@ pre_img_inf.config(yscrollcommand = img_srl_bar.set);
 pre_img_inf.config(state = 'disabled');
 
 #Empty Lable to seprate two Text boxes..
-uni_lbl = ttk.Label(frm_img_txt_box, width = 10, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 3, sticky = 'ns');
-
+uni_lbl = Label(frm_img_txt_box, width = 10, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 3, sticky = 'ns');
 
 #Text box to show image prediction info..
 pre_vid_inf = Text(frm_vid_txt_box,)
@@ -221,28 +246,35 @@ vid_srl_bar.grid(row = 1, column = 2, sticky = 'nsew');
 pre_vid_inf.config(yscrollcommand = vid_srl_bar.set);
 pre_vid_inf.config(state = 'disabled');
 
+'''______________________________Buttons_for_Image_and_Video_Analysis___________________________________________________'''
 #Button for send request and analyze an image...
-alz_img_btn = ttk.Button(frm_img_txt_box, text = 'Ananlyze Image', command = img_anl).grid(row = 2, column = 0, sticky = 'ew');
-
-
-'''___________________Same_but_different_things_for_Video_Analysis..._______________________________________'''
-
+alz_img_btn = Button(frm_img_txt_box, text = 'Ananlyze Image', command = img_anl, bg = 'light green').grid(row = 2, column = 0, sticky = 'ew');
 
 #Button for send request and analyze an image...
-alz_vid_btn = ttk.Button(frm_vid_txt_box, text = 'Ananlyze Video', command = vid_anl).grid(row = 2, sticky = 'ew');
+alz_vid_btn = Button(frm_vid_txt_box, text = 'Ananlyze Video', command = vid_anl, bg = 'light green').grid(row = 2, sticky = 'ew');
+
+'''_____________________________Info._Buttons_image_and_video____________________________________'''
+#Button for showing image information.......
+shw_img_inf = Button(frm_img_txt_box, text = 'Show Image with Analysis', bg = 'yellow').grid(row = 3, column = 0, sticky = 'ew');
+
+#Button for showing video information.......
+shw_vid_inf = Button(frm_vid_txt_box, text = 'Show Frames with Aanalysis', bg = 'yellow').grid(row = 3, column = 0, sticky = 'ew');
 
 ##print(root.children);
 ##print(root._windowingsystem);
 
-#Button to make connection through Clarifai API client....;
-uni_lbl = ttk.Label(frm_con, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 0, sticky = 'ew');
+#Empty Labels to create gaps between connection button and text_box...
+for i in range(2):
+    uni_lbl = Label(frm_con, background = bgcolor, ).grid(row = i, column = 0, sticky = 'ew');
 
+#Button to make connection through Clarifai API client....;
 clf_con_txt = StringVar()
 clf_con_txt.set('Connect To Clarifai');
-clf_con_btn = ttk.Button(frm_con, textvariable = clf_con_txt, command = mak_con).grid(row = 1, column = 1, sticky = 'nsew');
+clf_con_btn = Button(frm_con, textvariable = clf_con_txt, command = mak_con, bg = 'red')
+clf_con_btn.grid(row = 4, column = 1, sticky = 'nsew');
 frm_con.grid_rowconfigure(0, weight = 1);
 frm_con.grid_columnconfigure(0, weight = 1);
-frm_con.grid_rowconfigure(2, weight = 1);
-frm_con.grid_columnconfigure(2, weight = 1);
+frm_con.grid_rowconfigure(10, weight = 1);
+frm_con.grid_columnconfigure(10, weight = 1);
 
 root.mainloop();
