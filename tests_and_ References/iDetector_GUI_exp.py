@@ -1,7 +1,9 @@
-from tkinter import Tk, Text, Button, Label, filedialog, messagebox, Menu, StringVar, Scrollbar, LEFT, RIGHT, Frame
+from tkinter import Tk, Text, Button, Label, filedialog, messagebox, Menu, StringVar, Scrollbar,\
+     LEFT, RIGHT, Frame, PhotoImage,Canvas, HORIZONTAL, VERTICAL, Toplevel
 from clarifai.rest import ClarifaiApp, Image as ClImage, Video as ClVid
 from timeit import default_timer
 from terminaltables import DoubleTable
+from PIL import Image, ImageTk
 
 #common settings...
 fil_img_nam = " ";
@@ -10,13 +12,6 @@ dir_int = "/home";
 bgcolor = "blue";
 model = ' ';
 '''__________________________________________All_Functions_______________________________________...'''
-
-
-#Image Information Function...
-def img_inf(img):
-##    try:
-##        global fil_mg_nam
-    pass;
 
 
 #Settings Menu function....
@@ -46,7 +41,43 @@ def mak_con():
 
     except Exception as e:
         messagebox.showerror('Connection Status', str(e));
+
+#Image Information Function...
+def img_inf():
+    global fil_img_nam;
+    if fil_img_nam != ' ':
+        try:
+            root=Toplevel();
+            print("Image Name is:: {}".format(fil_img_nam));
+            
+            frame=Frame(master = root,width=500,height=100)
+            frame.grid(row=0,column=0)
+
+            #img = PhotoImage(file = '/home/raja/Pictures/Python_vs._others.png');
+            image = Image.open(fil_img_nam);
+            photo = ImageTk.PhotoImage(image)
+            canvas=Canvas(frame,bg='violet',width=800,height=500,scrollregion=(0,0,900,800));
+            canvas.create_image(300, 300, image = photo)
+
+            hbar=Scrollbar(frame,orient=HORIZONTAL)
+            hbar.grid(row = 1, column = 0, sticky = 'ew');
+            hbar.config(command=canvas.xview)
+
+            vbar=Scrollbar(frame,orient=VERTICAL)
+            vbar.grid(row = 0, column = 1, sticky = 'ns');
+            vbar.config(command=canvas.yview)
+
+            ##canvas.config(width=300,height=300)
+            canvas.config(xscrollcommand = hbar.set, yscrollcommand = vbar.set)
+            canvas.grid(row = 0, column = 0, sticky = 'nsew');
+            root.mainloop();
+        except Exception as e:
+            print(str(e));
+            messagebox.showerror('I/O Error',str(e));
+    else:
+        messagebox.showerror('I/O Error', 'No file file selected..');
     
+   
 
 #Video Analysis.
 def vid_anl():
@@ -122,7 +153,7 @@ def img_bwr(file_type):
 
     #Distinguishing FileDailog for image and Videofiles...
     if file_type is 'img':
-        file = filedialog.askopenfile(initialdir = dir_int, title = 'Select Files...',filetypes = (("jpeg files","*.jpg"), ("all files","*.*")));
+        file = filedialog.askopenfile(initialdir = dir_int, title = 'Select Files...',filetypes = (("jpeg files","*.jpg"),("PNG files","*.png"), ("all files","*.*")));
         print("File Opened is : {}".format(file));
         fil_img_nam = str(file);
         
@@ -147,6 +178,10 @@ def img_bwr(file_type):
             if fil_vid_nam[i] == '/':
                 dir_int = fil_vid_nam[:i];
                 break;
+
+
+
+
         
 '''__________________________Root_window...________________________________________'''    
 
@@ -255,7 +290,7 @@ alz_vid_btn = Button(frm_vid_txt_box, text = 'Ananlyze Video', command = vid_anl
 
 '''_____________________________Info._Buttons_image_and_video____________________________________'''
 #Button for showing image information.......
-shw_img_inf = Button(frm_img_txt_box, text = 'Show Image with Analysis', bg = 'yellow').grid(row = 3, column = 0, sticky = 'ew');
+shw_img_inf = Button(frm_img_txt_box, text = 'Show Image with Analysis', bg = 'yellow', command = img_inf).grid(row = 3, column = 0, sticky = 'ew');
 
 #Button for showing video information.......
 shw_vid_inf = Button(frm_vid_txt_box, text = 'Show Frames with Aanalysis', bg = 'yellow').grid(row = 3, column = 0, sticky = 'ew');
