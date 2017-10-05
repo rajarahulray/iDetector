@@ -46,8 +46,9 @@ def mak_con():
 def img_inf():
     global fil_img_nam;
     if fil_img_nam != ' ':
+        root=Toplevel();
         try:
-            root=Toplevel();
+            
             print("Image Name is:: {}".format(fil_img_nam));
             
             frame=Frame(master = root,width=500,height=100)
@@ -70,12 +71,12 @@ def img_inf():
             ##canvas.config(width=300,height=300)
             canvas.config(xscrollcommand = hbar.set, yscrollcommand = vbar.set)
             canvas.grid(row = 0, column = 0, sticky = 'nsew');
-            root.mainloop();
         except Exception as e:
             print(str(e));
             messagebox.showerror('I/O Error',str(e));
+        root.mainloop();
     else:
-        messagebox.showerror('I/O Error', 'No file file selected..');
+        messagebox.showerror('I/O Error', 'No file selected..');
     
    
 
@@ -196,20 +197,13 @@ root.config(background = bgcolor);
 
 #frames.........
 frm_int = Frame(root, background = bgcolor);
-frm_int.grid(row = 0, columnspan = 6, sticky = 'ew');
+frm_int.pack()
 
-
-frm_img_txt_box = Frame(root, background = bgcolor);
-frm_img_txt_box.grid(row = 2, column = 0, sticky = 'nsew');
-frm_img_txt_box.isgridded = True;
-
-frm_vid_txt_box = Frame(root, background = bgcolor);
-frm_vid_txt_box.grid(row = 2, column = 1, sticky = 'nsew');
-frm_vid_txt_box.isgridded = True;
-
+frm_anl_box = Frame(root, background = bgcolor);
+frm_anl_box.pack();
 
 frm_con = Frame(root, background = bgcolor);
-frm_con.grid(row = 4, columnspan = 4, sticky = 'ew');
+frm_con.pack();
 
 
 '''_________________________________________________MenuBar_______________________'''
@@ -250,50 +244,50 @@ frm_int.grid_columnconfigure(4, weight = 1);
 uni_lbl = Label(frm_int, background = bgcolor, font = 'Lucinda').grid(row = 3, column = 3, sticky = 'ew');
 
 #Button to fetch image....
-img_btn = Button(frm_img_txt_box, text = "Browse Image",  command = lambda: img_bwr('img'), bg = 'violet', ).grid(row = 0, column = 0, sticky = 'ew');
+img_btn = Button(frm_anl_box, text = "Browse Image",  command = lambda: img_bwr('img'), bg = 'violet', ).grid(row = 0, column = 0, sticky = 'ew');
 
 #Button to fetch video....
-vid_btn = Button(frm_vid_txt_box, text = "Browse Video", command = lambda: img_bwr('vid'), bg = 'violet').grid(row = 0, column = 0, sticky = 'ew');
+vid_btn = Button(frm_anl_box, text = "Browse Video", command = lambda: img_bwr('vid'), bg = 'violet').grid(row = 0, column = 3, sticky = 'ew');
 
 #Text box to show image prediction info..
-pre_img_inf = Text(frm_img_txt_box,)
+pre_img_inf = Text(frm_anl_box,)
 pre_img_inf.grid(row = 1, column = 0, sticky = 'nsew');
 
 
 #Scrollbar for image details text box....
-img_srl_bar = Scrollbar(frm_img_txt_box, command = pre_img_inf.yview);
-img_srl_bar.grid(row = 1, column = 2, sticky = 'nsew');
+img_srl_bar = Scrollbar(frm_anl_box, command = pre_img_inf.yview);
+img_srl_bar.grid(row = 1, column = 1, sticky = 'nsew');
 pre_img_inf.config(yscrollcommand = img_srl_bar.set);
 pre_img_inf.config(state = 'disabled');
 
 #Empty Lable to seprate two Text boxes..
-uni_lbl = Label(frm_img_txt_box, width = 10, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 3, sticky = 'ns');
+uni_lbl = Label(frm_anl_box, width = 10, background = bgcolor, font = 'Lucinda').grid(row = 0, column = 2, sticky = 'ns');
 
 #Text box to show image prediction info..
-pre_vid_inf = Text(frm_vid_txt_box,)
+pre_vid_inf = Text(frm_anl_box,)
 pre_vid_inf.config(state = 'disabled');
-pre_vid_inf.grid(row = 1, column = 0, sticky = 'ew');
+pre_vid_inf.grid(row = 1, column = 3, sticky = 'ew');
 
 
 #Scrollbar for video details text box....
-vid_srl_bar = Scrollbar(frm_vid_txt_box, command = pre_vid_inf.yview);
-vid_srl_bar.grid(row = 1, column = 2, sticky = 'nsew');
+vid_srl_bar = Scrollbar(frm_anl_box, command = pre_vid_inf.yview);
+vid_srl_bar.grid(row = 1, column = 4, sticky = 'nsew');
 pre_vid_inf.config(yscrollcommand = vid_srl_bar.set);
 pre_vid_inf.config(state = 'disabled');
 
 '''______________________________Buttons_for_Image_and_Video_Analysis___________________________________________________'''
 #Button for send request and analyze an image...
-alz_img_btn = Button(frm_img_txt_box, text = 'Ananlyze Image', command = img_anl, bg = 'light green').grid(row = 2, column = 0, sticky = 'ew');
+alz_img_btn = Button(frm_anl_box, text = 'Ananlyze Image', command = img_anl, bg = 'light green').grid(row = 2, column = 0, sticky = 'ew');
 
 #Button for send request and analyze an image...
-alz_vid_btn = Button(frm_vid_txt_box, text = 'Ananlyze Video', command = vid_anl, bg = 'light green').grid(row = 2, sticky = 'ew');
+alz_vid_btn = Button(frm_anl_box, text = 'Ananlyze Video', command = vid_anl, bg = 'light green').grid(row = 2, column = 3, sticky = 'ew');
 
 '''_____________________________Info._Buttons_image_and_video____________________________________'''
 #Button for showing image information.......
-shw_img_inf = Button(frm_img_txt_box, text = 'Show Image with Analysis', bg = 'yellow', command = img_inf).grid(row = 3, column = 0, sticky = 'ew');
+shw_img_inf = Button(frm_anl_box, text = 'Show Image with Analysis', bg = 'yellow', command = img_inf).grid(row = 3, column = 0, sticky = 'ew');
 
 #Button for showing video information.......
-shw_vid_inf = Button(frm_vid_txt_box, text = 'Show Frames with Aanalysis', bg = 'yellow').grid(row = 3, column = 0, sticky = 'ew');
+shw_vid_inf = Button(frm_anl_box, text = 'Show Frames with Aanalysis', bg = 'yellow').grid(row = 3, column = 3, sticky = 'ew');
 
 ##print(root.children);
 ##print(root._windowingsystem);
@@ -307,9 +301,5 @@ clf_con_txt = StringVar()
 clf_con_txt.set('Connect To Clarifai');
 clf_con_btn = Button(frm_con, textvariable = clf_con_txt, command = mak_con, bg = 'red')
 clf_con_btn.grid(row = 4, column = 1, sticky = 'nsew');
-frm_con.grid_rowconfigure(0, weight = 1);
-frm_con.grid_columnconfigure(0, weight = 1);
-frm_con.grid_rowconfigure(10, weight = 1);
-frm_con.grid_columnconfigure(10, weight = 1);
 
 root.mainloop();
